@@ -1,0 +1,9 @@
+{% extends 'events/base.html' %}
+{% block content %}
+<h1>✅ Событие сохранено!</h1>
+<p><b>Название:</b> {{ data.title }}</p>
+<p><b>Дата:</b> {{ data.date }} {{ data.time }}</p>
+<p><b>Категория:</b> {{ data.category }}</p>
+<p><b>Уведомление:</b> {% if data.notify %}Да{% else %}Нет{% endif %}</p>
+<a href="{% url 'events:index' %}" class="btn">← Назад</a>
+{% endblock %}

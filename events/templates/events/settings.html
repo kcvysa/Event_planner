@@ -1,0 +1,20 @@
+{% extends 'events/base.html' %}
+
+{% block title %}Настройки{% endblock %}
+
+{% block content %}
+<h1>⚙️ Настройки</h1>
+
+<form method="post" class="settings-form">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="form-group">
+            <label>{{ field.label }}</label>
+            {{ field }}
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn">Сохранить настройки</button>
+</form>
+
+<p class="hint">Настройки сохраняются в cookies браузера на 30 дней.</p>
+{% endblock %}
