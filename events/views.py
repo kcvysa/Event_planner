@@ -22,7 +22,7 @@ def index(request):
         'language': language,
         'last_visit': last_visit,
     })
-    response.set_cookie('last_visit', 'Главная', max_age=3600 * 24 * 30)
+    response.set_cookie('last_visit', 'home', max_age=3600 * 24 * 30)
     return response
 
 
@@ -69,5 +69,5 @@ def settings_view(request):
 
 def about(request):
     response = render(request, 'events/about.html')
-    response.set_cookie('last_visit', 'О проекте', max_age=3600 * 24 * 30)
+    response.set_cookie('last_visit', 'about', max_age=3600 * 24 * 30)
     return response

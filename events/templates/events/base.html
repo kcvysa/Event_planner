@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="{{ language|default:'ru' }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Планировщик событий{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'events/css/style.css' %}">
+</head>
+<body class="theme-{{ theme|default:'light' }}">
+
+    <header class="header">
+        <div class="logo">
+            <img src="{% static 'events/img/logo.png' %}" alt="Event Planner" width="40">
+            <span>Event Planner</span>
+        </div>
+        <nav class="nav">
+            <a href="{% url 'events:index' %}">Главная</a>
+            <a href="{% url 'events:settings' %}">Настройки</a>
+            <a href="{% url 'events:about' %}">О проекте</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% if last_visit %}
+            <p class="last-visit">
+                Последняя посещённая страница:
+                <b>
+                    {% if last_visit == 'home' %}Главная
+                    {% elif last_visit == 'settings' %}Настройки
+                    {% elif last_visit == 'about' %}О проекте
+                    {% else %}{{ last_visit }}{% endif %}
+                </b>
+            </p>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 Event Planner — планируйте с умом</p>
+    </footer>
+
+</body>
+</html>

@@ -1,6 +1,6 @@
 {% extends 'events/base.html' %}
 
-{% block title %}События{% endblock %}
+{% block title %}Мои события{% endblock %}
 
 {% block content %}
 <h1>📅 Мои события</h1>
@@ -24,7 +24,7 @@
 <hr>
 
 <h2>➕ Добавить событие</h2>
-<form method="post" class="event-form">
+<form method="post" action="{% url 'events:add_event' %}" class="event-form">
     {% csrf_token %}
     {% for field in form %}
         <div class="form-group">
