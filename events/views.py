@@ -1,58 +1,62 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+
 from .forms import EventForm, SettingsForm
 from .data import EVENTS
+from .translations import get_translations
+
+
+def _common_context(request):
+    """Общий контекст для всех страниц: тема, язык, переводы."""
+    theme = request.COOKIES.get('theme', 'light')
+    language = request.COOKIES.get('language', 'ru')
+    return {
+        'theme': theme,
+        'language': language,
+        't': get_translations(language),
+    }
 
 
 def index(request):
-    """Главная страница со списком событий и формой добавления."""
     form = EventForm()
     events = list(EVENTS)
 
-    # Читаем настройки из cookies
-    theme = request.COOKIES.get('theme', 'light')
-    language = request.COOKIES.get('language', 'ru')
-    last_visit = request.COOKIES.get('last_visit', None)
+    context = _common_context(request)
+    context['form'] = form
+    context['events'] = events
+    context['last_visit'] = request.COOKIES.get('last_visit', None)
 
-    # Сохраняем последнюю посещённую страницу
-    response = render(request, 'events/index.html', {
-        'form': form,
-        'events': events,
-        'theme': theme,
-        'language': language,
-        'last_visit': last_visit,
-    })
+    response = render(request, 'events/index.html', context)
     response.set_cookie('last_visit', 'home', max_age=3600 * 24 * 30)
     return response
 
 
 def add_event(request):
-    """Обработка формы добавления события."""
     if request.method == 'POST':
         form = EventForm(request.POST)
         if form.is_valid():
-            # Просто показываем успех (данные не сохраняем в БД)
-            data = form.cleaned_data
-            return render(request, 'events/success.html', {'data': data})
+            context = _common_context(request)
+            context['data'] = form.cleaned_data
+            return render(request, 'events/success.html', context)
     else:
         form = EventForm()
-    return render(request, 'events/index.html', {'form': form, 'events': EVENTS})
+
+    context = _common_context(request)
+    context['form'] = form
+    context['events'] = EVENTS
+    return render(request, 'events/index.html', context)
 
 
 def settings_view(request):
-    """Страница настроек с сохранением в cookies."""
     if request.method == 'POST':
         form = SettingsForm(request.POST)
         if form.is_valid():
             response = redirect('events:index')
-            # Сохраняем все настройки в cookies (30 дней)
             response.set_cookie('theme', form.cleaned_data['theme'], max_age=3600 * 24 * 30)
             response.set_cookie('language', form.cleaned_data['language'], max_age=3600 * 24 * 30)
             response.set_cookie('notification_email', form.cleaned_data['notification_email'], max_age=3600 * 24 * 30)
             response.set_cookie('notify_before', form.cleaned_data['notify_before'], max_age=3600 * 24 * 30)
             return response
     else:
-        # Заполняем форму значениями из cookies
         initial = {
             'theme': request.COOKIES.get('theme', 'light'),
             'language': request.COOKIES.get('language', 'ru'),
@@ -61,13 +65,13 @@ def settings_view(request):
         }
         form = SettingsForm(initial=initial)
 
-    return render(request, 'events/settings.html', {
-        'form': form,
-        'theme': request.COOKIES.get('theme', 'light'),
-    })
+    context = _common_context(request)
+    context['form'] = form
+    return render(request, 'events/settings.html', context)
 
 
 def about(request):
-    response = render(request, 'events/about.html')
+    context = _common_context(request)
+    response = render(request, 'events/about.html', context)
     response.set_cookie('last_visit', 'about', max_age=3600 * 24 * 30)
     return response

@@ -1,37 +1,61 @@
 {% extends 'events/base.html' %}
 
-{% block title %}Мои события{% endblock %}
+{% block title %}{{ t.my_events }}{% endblock %}
 
 {% block content %}
-<h1>📅 Мои события</h1>
+<h1>{{ t.my_events }}</h1>
 
 <section class="events-grid">
     {% for event in events %}
         <article class="event-card">
             <h3>{{ event.icon }} {{ event.title }}</h3>
-            <p><b>Дата:</b> {{ event.date }} в {{ event.time }}</p>
-            <p><b>Категория:</b> {{ event.category }}</p>
+            <p><b>{{ t.date }}:</b> {{ event.date }} {{ t.time }}: {{ event.time }}</p>
+            <p><b>{{ t.category }}:</b> {{ event.category }}</p>
             <p>{{ event.description }}</p>
             {% if event.notify %}
-                <span class="badge">🔔 Уведомление включено</span>
+                <span class="badge">{{ t.notify_on }}</span>
             {% endif %}
         </article>
     {% empty %}
-        <p>Событий пока нет.</p>
+        <p>{{ t.no_events }}</p>
     {% endfor %}
 </section>
 
 <hr>
 
-<h2>➕ Добавить событие</h2>
+<h2>{{ t.add_event }}</h2>
 <form method="post" action="{% url 'events:add_event' %}" class="event-form">
     {% csrf_token %}
-    {% for field in form %}
-        <div class="form-group">
-            <label>{{ field.label }}</label>
-            {{ field }}
-        </div>
-    {% endfor %}
-    <button type="submit" class="btn">Сохранить</button>
+
+    <div class="form-group">
+        <label>{{ t.event_title }}</label>
+        {{ form.title }}
+    </div>
+
+    <div class="form-group">
+        <label>{{ t.event_date }}</label>
+        {{ form.date }}
+    </div>
+
+    <div class="form-group">
+        <label>{{ t.event_time }}</label>
+        {{ form.time }}
+    </div>
+
+    <div class="form-group">
+        <label>{{ t.event_category }}</label>
+        {{ form.category }}
+    </div>
+
+    <div class="form-group">
+        <label>{{ t.event_description }}</label>
+        {{ form.description }}
+    </div>
+
+    <div class="form-group">
+        <label>{{ form.notify }} {{ t.event_notify }}</label>
+    </div>
+
+    <button type="submit" class="btn">{{ t.save }}</button>
 </form>
 {% endblock %}
